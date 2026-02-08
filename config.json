@@ -1,5 +1,7 @@
 {
    "config": {
+      "hotelName": "OMISHA CAFE",
+      "upsellThreshold": 30,
     "serviceHours": "07:00 AM - 10:00 PM",
     "frontDeskPhone": "+1234567890",
     "isOpen": true
