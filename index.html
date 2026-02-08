@@ -160,7 +160,7 @@
             btn.innerText = "Sending...";
 
             try {
-                const url = "https://corsproxy.io/?url=" + encodeURIComponent("https://api.telegram.org/bot${BOT_TOKEN}/sendMessage")
+                const url = `https://corsproxy.io/?url=${encodeURIComponent(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`)}`
                 const res = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
