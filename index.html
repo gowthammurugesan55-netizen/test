@@ -65,20 +65,41 @@
         <button onclick="toggleCart()" class="bg-orange-900 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-orange-900/20">View Cart</button>
     </div>
 
-    <div id="cart-modal" class="fixed inset-0 bg-black/60 z-[70] hidden flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 max-h-[85vh] overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Your Order</h2>
-                <button onclick="toggleCart()" class="text-gray-300 text-3xl">&times;</button>
-            </div>
-            <div id="cart-items" class="space-y-4 mb-8"></div>
-            <div class="space-y-4 border-t pt-6">
-                <input type="text" id="cust-name" placeholder="Full Name" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500">
-                <input type="tel" id="cust-phone" placeholder="Mobile Number" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500">
-                <button onclick="sendOrder()" id="place-order-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-green-600/20">Place Your Order</button>
-            </div>
+    <div id="cart-items" class="space-y-4 mb-8"></div>
+
+<div class="space-y-4 border-t pt-6">
+    <div class="grid grid-cols-2 gap-4">
+        <input type="text" id="cust-name" placeholder="Full Name" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
+        <input type="tel" id="cust-phone" placeholder="Mobile Number" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-2xl">
+        <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Delivery Time</p>
+        <select id="delivery-schedule" class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold">
+            <option value="Now">Deliver Now (ASAP)</option>
+            <option value="Morning (08:00 - 09:00)">Breakfast (08:00 - 09:00 AM)</option>
+            <option value="Morning (09:00 - 10:00)">Breakfast (09:00 - 10:00 AM)</option>
+            <option value="Other">Specific time (Add in notes)</option>
+        </select>
+    </div>
+
+    <textarea id="special-notes" placeholder="Any special requests? (e.g. No onions, extra sugar, less ice...)" 
+        class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm h-24"></textarea>
+
+    <div class="bg-gray-50 p-4 rounded-2xl">
+        <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Payment Method</p>
+        <div class="flex gap-4">
+            <label class="flex items-center gap-2 text-sm">
+                <input type="radio" name="payment" value="Room Charge" checked class="text-orange-900"> Room Charge
+            </label>
+            <label class="flex items-center gap-2 text-sm">
+                <input type="radio" name="payment" value="Cash/UPI" class="text-orange-900"> Cash/UPI
+            </label>
         </div>
     </div>
+
+    <button onclick="sendOrder()" id="place-order-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl">Place Room Order</button>
+</div>
 
     <script>
         let menu = {};
@@ -233,32 +254,82 @@ function renderSpecials(specials) {
             `).join('') || "<p class='text-center text-gray-400'>Your cart is empty</p>";
         }
 
-        async function sendOrder() {
-            const name = document.getElementById('cust-name').value;
-            const phone = document.getElementById('cust-phone').value;
-            if (!name || !phone) return alert("Please provide details");
+        // 1. Guest Memory: Load saved details when the page opens
+window.onload = function() {
+    document.getElementById('cust-name').value = localStorage.getItem('guestName') || "";
+    document.getElementById('cust-phone').value = localStorage.getItem('guestPhone') || "";
+};
 
-            let text = `🛎 *ORDER: ROOM ${roomNumber}*\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n\n`;
-            let total = 0;
-            Object.values(cart).forEach(i => {
-                text += `• ${i.qty}x ${i.name} (₹${(i.qty * i.price).toFixed(2)})\n`;
-                total += (i.qty * i.price);
-            });
-            text += `\n💰 *Total: ₹${total.toFixed(2)}*`;
+async function sendOrder() {
+    const name = document.getElementById('cust-name').value;
+    const phone = document.getElementById('cust-phone').value;
+    const notes = document.getElementById('special-notes').value || "None";
+    const schedule = document.getElementById('delivery-schedule').value;
+    const payment = document.querySelector('input[name="payment"]:checked').value;
 
-            const btn = document.getElementById('place-order-btn');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
+    if (!name || !phone) return alert("Please provide your details");
 
-            try {
-                await fetch(SCRIPT_URL, { method: "POST", mode: 'no-cors', body: JSON.stringify({ text: text }) });
-                alert("Order Placed Successfully!");
-                location.reload();
-            } catch (e) { alert("Error sending order."); btn.disabled = false; }
-        }
+    // 2. Guest Memory: Save details for next time
+    localStorage.setItem('guestName', name);
+    localStorage.setItem('guestPhone', phone);
+
+    // 3. Construct Enhanced Message for Telegram
+    let text = `🛎 *NEW ORDER: ROOM ${roomNumber}*\n`;
+    text += `👤 *Guest:* ${name}\n`;
+    text += `📞 *Phone:* ${phone}\n`;
+    text += `⏰ *Delivery:* ${schedule}\n`;
+    text += `💳 *Payment:* ${payment}\n`;
+    text += `📝 *Notes:* ${notes}\n\n`;
+    
+    let total = 0;
+    Object.values(cart).forEach(i => {
+        text += `• ${i.qty}x ${i.name} ($${(i.qty * i.price).toFixed(2)})\n`;
+        total += (i.qty * i.price);
+    });
+    text += `\n💰 *Total: $${total.toFixed(2)}*`;
+
+    // Send logic...
+    const btn = document.getElementById('place-order-btn');
+    btn.innerText = "Sending...";
+    btn.disabled = true;
+
+    try {
+        await fetch(SCRIPT_URL, { method: "POST", mode: 'no-cors', body: JSON.stringify({ text: text }) });
+        showSuccessOverlay();
+        cart = {};
+        updateBottomBar();
+    } catch (e) { 
+        alert("Error."); 
+        btn.disabled = false; 
+    }
+}
+
 
         loadMenu();
     </script>
+    <section class="p-4 max-w-md mx-auto mt-10 mb-20 border-t border-gray-200">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">🏨 Guest Concierge</h2>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <i class="fa fa-wifi text-orange-600 mb-2"></i>
+            <p class="text-[10px] text-gray-400 uppercase font-bold">Wi-Fi Password</p>
+            <p class="text-sm font-bold text-gray-700">HotelGuest2024</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <i class="fa fa-clock text-orange-600 mb-2"></i>
+            <p class="text-[10px] text-gray-400 uppercase font-bold">Checkout Time</p>
+            <p class="text-sm font-bold text-gray-700">11:00 AM</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2 flex justify-between items-center">
+            <div>
+                <p class="text-[10px] text-gray-400 uppercase font-bold">Need a Taxi?</p>
+                <p class="text-sm font-bold text-gray-700">Reception can book one for you</p>
+            </div>
+            <a href="tel:+1234567" class="bg-orange-100 p-3 rounded-full text-orange-600"><i class="fa fa-taxi"></i></a>
+        </div>
+    </div>
+</section>
+
 </body>
 </html>
 
