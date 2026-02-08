@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Room Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 pb-32">
+
+    <header class="bg-orange-800 text-white p-6 shadow-lg sticky top-0 z-50">
+        <h1 class="text-2xl font-bold">Cafe & Stay</h1>
+        <p id="room-display" class="text-sm opacity-80 uppercase tracking-widest font-semibold">Room: Detecting...</p>
+    </header>
+
+    <main class="p-4 max-w-md mx-auto" id="menu-container"></main>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-end">
+        <div class="bg-white w-full rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Your Order</h2>
+                <button onclick="toggleCart()" class="text-gray-400 text-2xl">&times;</button>
+            </div>
+            
+            <div id="cart-items" class="space-y-4 mb-6"></div>
+
+            <div class="space-y-3 border-t pt-4">
+                <input type="text" id="cust-name" placeholder="Your Name" class="w-full p-3 border rounded-lg">
+                <input type="tel" id="cust-phone" placeholder="Mobile Number" class="w-full p-3 border rounded-lg">
+                <button onclick="sendOrder()" id="place-order-btn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg">Confirm & Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottom-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center hidden shadow-2xl z-50">
+        <div onclick="toggleCart()" class="cursor-pointer">
+            <p id="cart-count" class="text-orange-800 font-bold">0 Items</p>
+            <p id="cart-total" class="text-lg font-black text-gray-800">$0.00</p>
+        </div>
+        <button onclick="toggleCart()" class="bg-orange-800 text-white px-8 py-3 rounded-xl font-bold">View Cart</button>
+    </div>
+
+    <script>
+        // --- DATA & CONFIG ---
+        const menu = {
+            "Hot Beverages": [
+                { id: 1, name: "Fresh Cappuccino", price: 4.50 },
+                { id: 2, name: "Masala Tea", price: 2.50 },
+                { id: 3, name: "Hot Chocolate", price: 5.00 }
+            ],
+            "Juice & Milkshakes": [
+                { id: 4, name: "Fresh Orange Juice", price: 6.00 },
+                { id: 5, name: "Belgium Chocolate Shake", price: 7.50 },
+                { id: 6, name: "Mango Smoothie", price: 6.50 }
+            ]
+        };
+
+        const BOT_TOKEN = "8520607292:AAH_ammL5A4Omx084g378S2lFTzOz8GcNIU";
+        const CHAT_ID = "840466618";
+
+        let cart = {};
+        const params = new URLSearchParams(window.location.search);
+        const roomNumber = params.get('room') || "Not Specified";
+        document.getElementById('room-display').innerText = "Room: " + roomNumber;
+
+        // --- RENDER MENU ---
+        const container = document.getElementById('menu-container');
+        for (const [category, items] of Object.entries(menu)) {
+            let section = `<h2 class="text-xl font-black mt-8 mb-4 text-gray-700 border-b-2 border-orange-200 pb-2 uppercase text-sm tracking-widest">${category}</h2>`;
+            items.forEach(item => {
+                section += `
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl mb-3 shadow-sm border border-gray-100">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">${item.name}</h3>
+                        <p class="text-orange-700 font-semibold">$${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-full">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm text-orange-800 font-bold">-</button>
+                        <span id="qty-${item.id}" class="w-4 text-center font-bold">0</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-orange-800 text-white rounded-full shadow-sm font-bold">+</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML += section;
+        }
+
+        // --- LOGIC ---
+        function changeQty(id, delta) {
+            let item;
+            for (let cat in menu) {
+                const found = menu[cat].find(i => i.id === id);
+                if (found) item = found;
+            }
+
+            if (!cart[id]) cart[id] = { name: item.name, price: item.price, qty: 0 };
+            cart[id].qty += delta;
+
+            if (cart[id].qty <= 0) {
+                delete cart[id];
+                document.getElementById(`qty-${id}`).innerText = 0;
+            } else {
+                document.getElementById(`qty-${id}`).innerText = cart[id].qty;
+            }
+            updateBottomBar();
+        }
+
+        function updateBottomBar() {
+            let count = 0, total = 0;
+            Object.values(cart).forEach(item => {
+                count += item.qty;
+                total += (item.qty * item.price);
+            });
+
+            const bar = document.getElementById('bottom-bar');
+            if (count > 0) {
+                bar.classList.remove('hidden');
+                document.getElementById('cart-count').innerText = count + " Items";
+                document.getElementById('cart-total').innerText = "$" + total.toFixed(2);
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('hidden');
+            renderCartItems();
+        }
+
+        function renderCartItems() {
+            const list = document.getElementById('cart-items');
+            list.innerHTML = "";
+            Object.values(cart).forEach(item => {
+                list.innerHTML += `
+                <div class="flex justify-between border-b pb-2">
+                    <span>${item.qty}x ${item.name}</span>
+                    <span class="font-bold">$${(item.qty * item.price).toFixed(2)}</span>
+                </div>`;
+            });
+        }
+
+        async function sendOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+
+            if (!name || !phone) return alert("Please enter Name and Mobile Number");
+
+            let orderText = `🛎 *NEW ORDER*\n📍 *Room:* ${roomNumber}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n\n*ITEMS:*\n`;
+            let total = 0;
+            
+            Object.values(cart).forEach(item => {
+                orderText += `▪️ ${item.qty}x ${item.name} ($${(item.qty * item.price).toFixed(2)})\n`;
+                total += (item.qty * item.price);
+            });
+            orderText += `\n💰 *Total: $${total.toFixed(2)}*`;
+
+            const btn = document.getElementById('place-order-btn');
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: orderText, parse_mode: "Markdown" })
+                });
+                if(res.ok) {
+                    alert("Order Placed Successfully!");
+                    location.reload();
+                }
+            } catch (e) {
+                alert("Error sending order.");
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
+
