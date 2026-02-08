@@ -27,6 +27,11 @@
         </div>
     </header>
 
+    <div id="special-banner-container" class="px-4 mt-4 overflow-hidden whitespace-nowrap">
+    <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out">
+        </div>
+    </div>
+
     <main class="p-4 max-w-md mx-auto" id="menu-container">
         <div class="text-center py-20 text-gray-400">Loading Menu...</div>
     </main>
@@ -75,13 +80,43 @@
         document.getElementById('room-display').innerText = "Room: " + roomNumber;
 
         async function loadMenu() {
-            try {
-                const res = await fetch('menu.json');
-                menu = await res.json();
-                renderMenu(menu);
-                renderCategoryNav();
-            } catch (e) { console.error(e); }
-        }
+    try {
+        const res = await fetch('menu.json');
+        menu = await res.json();
+        
+        // Render Specials
+        renderSpecials(menu.specials);
+        
+        // Clean the menu object to remove specials before rendering items
+        const menuItemsOnly = { ...menu };
+        delete menuItemsOnly.specials;
+        
+        renderMenu(menuItemsOnly);
+        renderCategoryNav(menuItemsOnly);
+    } catch (e) { console.error(e); }
+}
+
+function renderSpecials(specials) {
+    const slider = document.getElementById('banner-slider');
+    if (!specials || specials.length === 0) return;
+
+    slider.innerHTML = specials.map(s => `
+        <div class="min-w-full p-4 ${s.bgColor} ${s.textColor} rounded-2xl flex items-center gap-3 shadow-inner mr-4">
+            <i class="fa fa-star animate-pulse"></i>
+            <span class="font-bold text-sm overflow-hidden text-ellipsis">${s.text}</span>
+        </div>
+    `).join('');
+
+    // Auto-slide logic
+    let index = 0;
+    if (specials.length > 1) {
+        setInterval(() => {
+            index = (index + 1) % specials.length;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+        }, 4000);
+    }
+}
+
 
         function renderMenu(data) {
             const container = document.getElementById('menu-container');
