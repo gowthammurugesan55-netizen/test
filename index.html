@@ -3,344 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMISHA CAFE</title>
+    <title>Room Service - Pro Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .category-pill { scroll-margin-top: 100px; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-gray-50 pb-32">
+<body class="bg-gray-50 font-sans text-gray-900">
 
-    <header class="bg-orange-900 text-white p-4 shadow-lg sticky top-0 z-50">
-        <div class="flex justify-between items-center mb-3">
-            <h1 class="text-xl font-bold">OMISHA CAFE</h1>
-            <span id="room-display" class="text-xs bg-orange-800 px-3 py-1 rounded-full border border-orange-700">Room: ...</span>
+    <header class="p-6 bg-white shadow-sm sticky top-0 z-50">
+        <div class="flex justify-between items-start">
+            <h1 id="greeting" class="text-2xl font-black text-orange-900 uppercase italic leading-tight">Hotel Cafe</h1>
+            <div id="status-notice" class="text-[10px] py-1 px-3 rounded-full font-bold uppercase tracking-widest bg-orange-800 text-white">
+                Hours: <span id="hours-display">...</span>
+            </div>
         </div>
         
-        <div class="relative">
-            <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
-            <input type="text" id="search-input" oninput="filterMenu()" placeholder="Search coffee, snacks..." 
-                class="w-full p-2 pl-10 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500">
+        <div class="mt-4 relative">
+            <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="search-input" oninput="renderMenu()" placeholder="Search for coffee, snacks..." 
+                class="w-full bg-gray-100 border-none rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-orange-500 text-sm">
         </div>
 
-        <div id="status-notice" class="mt-2 text-[10px] text-center py-1 rounded-md font-bold uppercase tracking-widest bg-orange-800/50 text-orange-200">
-    Service Hours: <span id="hours-display">Loading...</span>
-</div>
-
+        <div id="category-nav" class="flex gap-2 overflow-x-auto no-scrollbar mt-4 pb-2"></div>
     </header>
 
-    <div id="special-banner-container" class="px-4 mt-4 overflow-hidden whitespace-nowrap">
-    <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out">
+    <div id="banner-container" class="px-4 mt-4 overflow-hidden">
+        <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out"></div>
+    </div>
+
+    <main id="menu-container" class="p-4 pb-32 space-y-8"></main>
+
+    <section class="p-4 max-w-md mx-auto mb-10 border-t pt-10">
+        <h2 class="text-lg font-bold mb-4">🏨 Guest Concierge</h2>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <i class="fa fa-wifi text-orange-600 mb-1"></i>
+                <p class="text-[10px] text-gray-400 uppercase font-bold">Wi-Fi Password</p>
+                <p class="text-sm font-bold text-gray-700">HotelGuest2026</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <i class="fa fa-clock text-orange-600 mb-1"></i>
+                <p class="text-[10px] text-gray-400 uppercase font-bold">Checkout Time</p>
+                <p class="text-sm font-bold text-gray-700">11:00 AM</p>
+            </div>
         </div>
+    </section>
+
+    <a id="call-link" href="tel:" class="fixed bottom-24 left-4 bg-green-600 text-white w-12 h-12 rounded-full shadow-2xl flex items-center justify-center z-40">
+        <i class="fa fa-phone"></i>
+    </a>
+
+    <div id="bottom-bar" class="fixed bottom-0 inset-x-0 bg-white p-4 border-t shadow-2xl hidden z-50">
+        <button onclick="toggleCart()" class="w-full bg-orange-900 text-white py-4 rounded-2xl font-bold flex justify-between px-6">
+            <span>View Tray (<span id="cart-count">0</span>)</span>
+            <span id="cart-total">$0.00</span>
+        </button>
     </div>
 
-    <main class="p-4 max-w-md mx-auto" id="menu-container">
-        <div class="text-center py-20 text-gray-400">Loading Menu...</div>
-    </main>
-
-    <div id="nav-btn" onclick="toggleNav()" class="fixed bottom-24 right-4 bg-white text-orange-900 w-12 h-12 rounded-full shadow-2xl flex items-center justify-center border border-orange-100 z-[55] cursor-pointer">
-        <i class="fa fa-utensils"></i>
-    </div>
-
-    <div id="nav-menu" class="fixed inset-0 bg-black/40 z-[60] hidden" onclick="toggleNav()">
-        <div class="absolute bottom-40 right-4 bg-white rounded-2xl p-4 shadow-2xl min-w-[200px]" onclick="event.stopPropagation()">
-            <h3 class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest">Categories</h3>
-            <div id="category-list" class="space-y-3"></div>
-        </div>
-    </div>
-
-    <a id="call-link" href="tel:+1234567890" class="fixed bottom-24 left-4 bg-green-600 text-white w-12 h-12 rounded-full shadow-2xl flex items-center justify-center z-[55] cursor-pointer">
-    <i class="fa fa-phone"></i>
-</a>
-
-
-    <div id="bottom-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-50">
-        <div onclick="toggleCart()" class="cursor-pointer">
-            <p id="cart-count" class="text-orange-900 font-bold text-sm">0 Items</p>
-            <p id="cart-total" class="text-xl font-black text-gray-900">$0.00</p>
-        </div>
-        <button onclick="toggleCart()" class="bg-orange-900 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-orange-900/20">View Cart</button>
-    </div>
-
-<div id="cart-modal" class="fixed inset-0 bg-black/60 z-[70] hidden flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 max-h-[85vh] overflow-y-auto shadow-2xl">
+    <div id="cart-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-end">
+        <div class="bg-white w-full max-h-[90vh] rounded-t-3xl p-6 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Your Order</h2>
-                <button onclick="toggleCart()" class="text-gray-300 text-3xl">&times;</button>
+                <h2 class="text-2xl font-bold text-orange-900">Your Tray</h2>
+                <button onclick="toggleCart()" class="text-gray-400 text-2xl">&times;</button>
             </div>
 
-    <div id="cart-items" class="space-y-4 mb-8"></div>
+            <div id="upsell-container" class="bg-orange-50 p-4 rounded-2xl mb-6 border border-orange-100">
+                <p id="upsell-text" class="text-xs font-bold text-orange-800 mb-2 italic"></p>
+                <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                    <div id="upsell-bar" class="bg-orange-600 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
 
-<div class="space-y-4 border-t pt-6">
-    <div class="grid grid-cols-2 gap-4">
-        <input type="text" id="cust-name" placeholder="Full Name" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
-        <input type="tel" id="cust-phone" placeholder="Mobile Number" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
-    </div>
+            <div id="cart-items" class="space-y-4 mb-6"></div>
+            
+            <div id="upsell-suggestions" class="mb-8"></div>
 
-    <div class="bg-gray-50 p-4 rounded-2xl">
-        <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Delivery Time</p>
-        <select id="delivery-schedule" class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold">
-            <option value="Now">Deliver Now (ASAP)</option>
-            <option value="Morning (08:00 - 09:00)">Breakfast (08:00 - 09:00 AM)</option>
-            <option value="Morning (09:00 - 10:00)">Breakfast (09:00 - 10:00 AM)</option>
-            <option value="Other">Specific time (Add in notes)</option>
-        </select>
-    </div>
-
-    <textarea id="special-notes" placeholder="Any special requests? (e.g. No onions, extra sugar, less ice...)" 
-        class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm h-24"></textarea>
-
-    <div class="bg-gray-50 p-4 rounded-2xl">
-        <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Payment Method</p>
-        <div class="flex gap-4">
-            <label class="flex items-center gap-2 text-sm">
-                <input type="radio" name="payment" value="Room Charge" checked class="text-orange-900"> Room Charge
-            </label>
-            <label class="flex items-center gap-2 text-sm">
-                <input type="radio" name="payment" value="Cash/UPI" class="text-orange-900"> Cash/UPI
-            </label>
-        </div>
-    </div>
-
-
-    <button onclick="sendOrder()" id="place-order-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl">Place Room Order</button>
-</div>
+            <div class="space-y-4 border-t pt-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="cust-name" placeholder="Full Name" class="p-4 bg-gray-50 rounded-2xl text-sm outline-none">
+                    <input type="tel" id="cust-phone" placeholder="Mobile No" class="p-4 bg-gray-50 rounded-2xl text-sm outline-none">
+                </div>
+                <div class="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <select id="delivery-schedule" class="bg-transparent text-sm font-bold outline-none w-full">
+                        <option value="ASAP">Deliver ASAP</option>
+                        <option value="Breakfast">Tomorrow Breakfast (8am-9am)</option>
+                    </select>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl flex gap-6 text-sm">
+                    <label class="flex items-center gap-2"><input type="radio" name="payment" value="Room Charge" checked> Room Charge</label>
+                    <label class="flex items-center gap-2"><input type="radio" name="payment" value="Cash/UPI"> Cash/UPI</label>
+                </div>
+                <textarea id="special-notes" placeholder="Special requests (e.g. No onions, extra sugar...)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm h-20 outline-none"></textarea>
+                <button onclick="sendOrder()" id="place-order-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg">Confirm & Send Order</button>
             </div>
         </div>
+    </div>
+
+    <div id="success-overlay" class="fixed inset-0 bg-orange-900/95 z-[100] hidden flex items-center justify-center p-6 text-center text-white">
+        <div class="max-w-xs">
+            <div class="text-6xl mb-4">✅</div>
+            <h2 class="text-3xl font-bold mb-2">Order Received!</h2>
+            <p class="opacity-90 mb-8">Your meal is being prepared for Room <span id="success-room"></span>.</p>
+            <div class="bg-white/10 p-6 rounded-3xl border border-white/20">
+                <p class="font-bold mb-4 text-orange-200 uppercase tracking-widest text-xs">Help us grow</p>
+                <p class="mb-6 text-sm">Enjoying the service? Leave a quick review on Google!</p>
+                <a href="YOUR_GOOGLE_REVIEW_LINK" target="_blank" class="block w-full bg-white text-orange-900 py-3 rounded-xl font-bold mb-3">Rate us 5 Stars ★</a>
+                <button onclick="location.reload()" class="text-white/60 text-sm underline">Back to Menu</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        let menu = {};
-        let cart = {};
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YgOYiEthHx5Y4FVDbK5C_xEXe0mum_stCQ-T143tfhaLUwjJJ9U2gOdB3OpLsXva/exec"; // Update this
-        
-        const params = new URLSearchParams(window.location.search);
-        const roomNumber = params.get('room') || "Lobby";
-        document.getElementById('room-display').innerText = "Room: " + roomNumber;
+        let menu = {}; let cart = {};let settings={};
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YgOYiEthHx5Y4FVDbK5C_xEXe0mum_stCQ-T143tfhaLUwjJJ9U2gOdB3OpLsXva/exec";
+        const roomNumber = new URLSearchParams(window.location.search).get('room') || 'TBD';
 
+        async function loadData() {
+            try {
+                const res = await fetch('menu.json');
+                menu = await res.json();
+                const specialsRes = await fetch('config.json');
+                settings = await specialsRes.json();
+                // Set Up Config
+                setDynamicGreeting(settings.config.hotelName);
+                document.getElementById('hours-display').innerText = settings.config.serviceHours;
+                document.getElementById('call-link').href = `tel:${settings.config.frontDeskPhone}`;
+                
+                // Load Memory
+                document.getElementById('cust-name').value = localStorage.getItem('gName') || "";
+                document.getElementById('cust-phone').value = localStorage.getItem('gPhone') || "";
 
-        async function loadMenu() {
-    try {
-        const res = await fetch('menu.json');
-        menu = await res.json();
-
-        const specialsRes = await fetch('config.json');
-        banner = await specialsRes.json();
-        
-        // Render Specials
-        renderSpecials(banner.specials);
-        
-        // Apply Config Settings
-        const config = banner.config;
-        document.getElementById('hours-display').innerText = config.serviceHours;
-        document.getElementById('call-link').href = `tel:${config.frontDeskPhone}`;
-        
-        // Handle "Closed" State
-        const orderBtn = document.getElementById('place-order-btn');
-        if (!config.isOpen) {
-            orderBtn.disabled = true;
-            orderBtn.innerText = "Kitchen is Currently Closed";
-            orderBtn.classList.replace('bg-green-600', 'bg-gray-400');
+                renderBanners(settings.specials);
+                renderCategoryNav();
+                renderMenu();
+                renderUpsellOptions();
+            } catch (e) { console.error("Load failed", e); }
         }
 
-        
-        // Render menu items (excluding config and specials)
-        const menuItemsOnly = { ...menu };
-        delete menuItemsOnly.specials;
-        delete menuItemsOnly.config;
-        
-        renderMenu(menuItemsOnly);
-        renderCategoryNav(menuItemsOnly);
-    } catch (e) { console.error(e); }
-}
+        function setDynamicGreeting(name) {
+            const hr = new Date().getHours();
+            let msg = hr < 12 ? "Good Morning ☕" : hr < 17 ? "Good Afternoon 🥪" : "Good Evening 🌙";
+            document.getElementById('greeting').innerHTML = `<span class="block text-xs font-normal opacity-70">${msg}</span> ${name}`;
+        }
 
-
-function renderSpecials(specials) {
-    const slider = document.getElementById('banner-slider');
-    if (!specials || specials.length === 0) return;
-
-    slider.innerHTML = specials.map(s => `
-        <div class="min-w-full p-4 ${s.bgColor} ${s.textColor} rounded-2xl flex items-center gap-3 shadow-inner mr-4">
-            <i class="fa fa-star animate-pulse"></i>
-            <span class="font-bold text-sm overflow-hidden text-ellipsis">${s.text}</span>
-        </div>
-    `).join('');
-
-    // Auto-slide logic
-    let index = 0;
-    if (specials.length > 1) {
-        setInterval(() => {
-            index = (index + 1) % specials.length;
-            slider.style.transform = `translateX(-${index * 100}%)`;
-        }, 4000);
-    }
-}
-
-
-        function renderMenu(data) {
-            const container = document.getElementById('menu-container');
-            container.innerHTML = "";
-            for (const [category, items] of Object.entries(data)) {
-                if(items.length === 0) continue;
-                let section = `<h2 id="cat-${category.replace(/\s/g, '')}" class="category-pill text-xl font-bold mt-8 mb-4 text-gray-800 flex items-center gap-2">
-                    <span class="w-1 h-6 bg-orange-600 rounded-full"></span> ${category}</h2>`;
-                
-                items.forEach(item => {
-                    const tag = item.isVeg ? 
-    '<span class="text-[10px] border border-green-600 p-0.5 text-green-600 mr-2">🟢</span>' : 
-    '<span class="text-[10px] border border-red-600 p-0.5 text-red-600 mr-2">🔴</span>';
-
-                    section += `
-                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl mb-3 shadow-sm border border-gray-50">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-gray-800">${tag}${item.name}</h3>
-                            <p class="text-orange-700 font-semibold">₹${item.price.toFixed(2)}</p>
-                        </div>
-                        <div class="flex items-center gap-3 bg-gray-100 p-1.5 rounded-full">
-                            <button onclick="changeQty(${item.id}, -1, '${item.name}', ${item.price})" class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm text-orange-900 font-bold">-</button>
-                            <span id="qty-${item.id}" class="w-4 text-center font-bold text-sm">0</span>
-                            <button onclick="changeQty(${item.id}, 1, '${item.name}', ${item.price})" class="w-8 h-8 flex items-center justify-center bg-orange-900 text-white rounded-full shadow-sm font-bold">+</button>
-                        </div>
-                    </div>`;
-                });
-                container.innerHTML += section;
-            }
+        function renderBanners(specials) {
+            const slider = document.getElementById('banner-slider');
+            slider.innerHTML = specials.map(s => `
+                <div class="min-w-full p-4">
+                    <div class="${s.bgColor} ${s.textColor} p-6 rounded-3xl shadow-sm flex items-center justify-between">
+                        <p class="font-bold text-sm">${s.text}</p>
+                        <i class="fa fa-arrow-right opacity-50"></i>
+                    </div>
+                </div>`).join('');
         }
 
         function renderCategoryNav() {
-            const list = document.getElementById('category-list');
-            list.innerHTML = "";
-            Object.keys(menu).forEach(cat => {
-                list.innerHTML += `<button onclick="scrollToCat('cat-${cat.replace(/\s/g, '')}')" class="block w-full text-left font-medium text-gray-600 hover:text-orange-700 py-1 capitalize">${cat}</button>`;
-            });
-        }
-
-        function filterMenu() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = {};
-            for (const [category, items] of Object.entries(menu)) {
-                const matches = items.filter(i => i.name.toLowerCase().includes(query));
-                if (matches.length > 0) filtered[category] = matches;
-            }
-            renderMenu(filtered);
+            const nav = document.getElementById('category-nav');
+            const cats = Object.keys(menu).filter(c => !['config', 'specials', 'Upsell Items'].includes(c));
+            nav.innerHTML = cats.map(c => `<button onclick="scrollToCat('${c}')" class="whitespace-nowrap px-6 py-2 bg-white border border-gray-100 rounded-full text-xs font-bold shadow-sm">${c}</button>`).join('');
         }
 
         function scrollToCat(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-            toggleNav();
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function toggleNav() { document.getElementById('nav-menu').classList.toggle('hidden'); }
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            const search = document.getElementById('search-input').value.toLowerCase();
+            let html = '';
+
+            for (const cat in menu) {
+                if (['config', 'specials', 'Upsell Items'].includes(cat)) continue;
+                
+                const filtered = menu[cat].filter(i => i.name.toLowerCase().includes(search));
+                if (filtered.length === 0) continue;
+
+                html += `<div id="${cat}"><h2 class="text-xl font-bold mt-8 mb-4 border-l-4 border-orange-600 pl-3">${cat}</h2>`;
+                filtered.forEach(item => {
+                    const badge = item.isTrending ? `<span class="bg-orange-100 text-orange-700 text-[9px] px-2 py-0.5 rounded-full ml-2">🔥 TRENDING</span>` : '';
+                    html += `
+                        <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-3">
+                            <div>
+                                <h3 class="font-bold text-gray-800">${item.name}${badge}</h3>
+                                <p class="text-xs text-gray-500 mt-1">$${item.price.toFixed(2)}</p>
+                            </div>
+                            <button onclick="changeQty(${item.id}, 1, '${item.name}', ${item.price})" class="bg-orange-50 text-orange-900 px-5 py-2 rounded-xl font-black shadow-sm active:scale-95 transition-transform">+</button>
+                        </div>`;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html || '<p class="text-center text-gray-400 py-10">No items found.</p>';
+        }
+
+        function renderUpsellOptions() {
+            const upItems = menu['Upsell Items'];
+            let html = `<p class="text-[10px] font-bold text-gray-400 mb-3 uppercase tracking-widest">Treat Yourself?</p><div class="flex gap-3 overflow-x-auto no-scrollbar">`;
+            upItems.forEach(item => {
+                html += `<div onclick="changeQty(${item.id}, 1, '${item.name}', ${item.price})" class="bg-white border border-gray-100 p-4 rounded-2xl min-w-[130px] text-center cursor-pointer shadow-sm active:bg-orange-50 transition-colors">
+                    <p class="text-xs font-bold text-gray-700">${item.name}</p>
+                    <p class="text-orange-700 text-[10px] font-bold mt-1">$${item.price.toFixed(2)} +</p>
+                </div>`;
+            });
+            document.getElementById('upsell-suggestions').innerHTML = html + `</div>`;
+        }
 
         function changeQty(id, delta, name, price) {
-            if (!cart[id]) cart[id] = { name: name, price: price, qty: 0 };
+            if (!cart[id]) cart[id] = { name, price, qty: 0 };
             cart[id].qty += delta;
             if (cart[id].qty <= 0) delete cart[id];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = Object.values(cart).reduce((a, b) => a + b.qty, 0);
+            const total = Object.values(cart).reduce((a, b) => a + (b.qty * b.price), 0);
             
-            document.querySelectorAll(`#qty-${id}`).forEach(el => el.innerText = cart[id] ? cart[id].qty : 0);
-            updateBottomBar();
-        }
+            document.getElementById('bottom-bar').classList.toggle('hidden', count === 0);
+            document.getElementById('cart-count').innerText = count;
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
 
-        function updateBottomBar() {
-            let count = 0, total = 0;
-            Object.values(cart).forEach(i => { count += i.qty; total += (i.qty * i.price); });
-            const bar = document.getElementById('bottom-bar');
-            bar.classList.toggle('hidden', count === 0);
-            document.getElementById('cart-count').innerText = count + " Items Selected";
-            document.getElementById('cart-total').innerText = "₹" + total.toFixed(2);
-        }
+            // Upsell Logic
+            const limit = settings.config.upsellThreshold;
+            const prog = Math.min((total / limit) * 100, 100);
+            document.getElementById('upsell-bar').style.width = prog + "%";
+            document.getElementById('upsell-text').innerText = total < limit ? `Add $${(limit - total).toFixed(2)} more for a free dessert! 🍰` : "Dessert Unlocked! 🍰✅";
 
-        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); renderCartItems(); }
+            renderCartItems();
+        }
 
         function renderCartItems() {
-            const list = document.getElementById('cart-items');
-            list.innerHTML = Object.values(cart).map(i => `
+            const container = document.getElementById('cart-items');
+            container.innerHTML = Object.entries(cart).map(([id, item]) => `
                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                    <span class="font-medium">${i.qty}x ${i.name}</span>
-                    <span class="font-bold text-orange-900">₹${(i.qty * i.price).toFixed(2)}</span>
-                </div>
-            `).join('') || "<p class='text-center text-gray-400'>Your cart is empty</p>";
+                    <div><p class="font-bold text-sm">${item.name}</p><p class="text-xs text-orange-800">$${(item.qty * item.price).toFixed(2)}</p></div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="changeQty(${id}, -1)" class="w-8 h-8 rounded-full bg-white shadow-sm font-bold text-orange-900">-</button>
+                        <span class="text-sm font-black">${item.qty}</span>
+                        <button onclick="changeQty(${id}, 1)" class="w-8 h-8 rounded-full bg-white shadow-sm font-bold text-orange-900">+</button>
+                    </div>
+                </div>`).join('');
         }
 
-        // 1. Guest Memory: Load saved details when the page opens
-window.onload = function() {
-    document.getElementById('cust-name').value = localStorage.getItem('guestName') || "";
-    document.getElementById('cust-phone').value = localStorage.getItem('guestPhone') || "";
-};
+        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); }
 
-async function sendOrder() {
-    const name = document.getElementById('cust-name').value;
-    const phone = document.getElementById('cust-phone').value;
-    const notes = document.getElementById('special-notes').value || "None";
-    const schedule = document.getElementById('delivery-schedule').value;
-    const payment = document.querySelector('input[name="payment"]:checked').value;
+        async function sendOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            if (!name || !phone) return alert("Please fill in your details.");
 
-    if (!name || !phone) return alert("Please provide your details");
+            localStorage.setItem('gName', name); localStorage.setItem('gPhone', phone);
 
-    // 2. Guest Memory: Save details for next time
-    localStorage.setItem('guestName', name);
-    localStorage.setItem('guestPhone', phone);
+            let text = `🛎 *NEW ORDER: ROOM ${roomNumber}*\n`;
+            text += `👤 *Guest:* ${name} (${phone})\n`;
+            text += `⏰ *Schedule:* ${document.getElementById('delivery-schedule').value}\n`;
+            text += `💳 *Pay via:* ${document.querySelector('input[name="payment"]:checked').value}\n`;
+            text += `📝 *Notes:* ${document.getElementById('special-notes').value || 'None'}\n\n`;
+            
+            let total = 0;
+            Object.values(cart).forEach(i => {
+                text += `• ${i.qty}x ${i.name} ($${(i.qty * i.price).toFixed(2)})\n`;
+                total += (i.qty * i.price);
+            });
+            text += `\n💰 *Total Bill: $${total.toFixed(2)}*`;
 
-    // 3. Construct Enhanced Message for Telegram
-    let text = `🛎 *NEW ORDER: ROOM ${roomNumber}*\n`;
-    text += `👤 *Guest:* ${name}\n`;
-    text += `📞 *Phone:* ${phone}\n`;
-    text += `⏰ *Delivery:* ${schedule}\n`;
-    text += `💳 *Payment:* ${payment}\n`;
-    text += `📝 *Notes:* ${notes}\n\n`;
-    
-    let total = 0;
-    Object.values(cart).forEach(i => {
-        text += `• ${i.qty}x ${i.name} (₹${(i.qty * i.price).toFixed(2)})\n`;
-        total += (i.qty * i.price);
-    });
-    text += `\n💰 *Total: ₹${total.toFixed(2)}*`;
+            const btn = document.getElementById('place-order-btn');
+            btn.innerText = "Sending..."; btn.disabled = true;
 
-    // Send logic...
-    const btn = document.getElementById('place-order-btn');
-    btn.innerText = "Sending...";
-    btn.disabled = true;
+            try {
+                await fetch(SCRIPT_URL, { method: "POST", mode: 'no-cors', body: JSON.stringify({ text }) });
+                document.getElementById('success-room').innerText = roomNumber;
+                document.getElementById('success-overlay').classList.remove('hidden');
+                document.getElementById('cart-modal').classList.add('hidden');
+                cart = {}; updateCartUI();
+            } catch (e) { alert("Error sending order."); btn.disabled = false; btn.innerText = "Try Again"; }
+        }
 
-    try {
-        await fetch(SCRIPT_URL, { method: "POST", mode: 'no-cors', body: JSON.stringify({ text: text }) });
-         alert("Order Placed Successfully!");
-        cart = {};
-        updateBottomBar();
-         location.reload();
-    } catch (e) { 
-        alert("Error."); 
-        btn.disabled = false; 
-    }
-}
-
-
-        loadMenu();
+        window.onload = loadData;
     </script>
-    <!-- <section class="p-4 max-w-md mx-auto mt-10 mb-20 border-t border-gray-200">
-    <h2 class="text-lg font-bold text-gray-800 mb-4">🏨 Guest Concierge</h2>
-    <div class="grid grid-cols-2 gap-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-            <i class="fa fa-wifi text-orange-600 mb-2"></i>
-            <p class="text-[10px] text-gray-400 uppercase font-bold">Wi-Fi Password</p>
-            <p class="text-sm font-bold text-gray-700">HotelGuest2024</p>
-        </div>
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-            <i class="fa fa-clock text-orange-600 mb-2"></i>
-            <p class="text-[10px] text-gray-400 uppercase font-bold">Checkout Time</p>
-            <p class="text-sm font-bold text-gray-700">11:00 AM</p>
-        </div>
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2 flex justify-between items-center">
-            <div>
-                <p class="text-[10px] text-gray-400 uppercase font-bold">Need a Taxi?</p>
-                <p class="text-sm font-bold text-gray-700">Reception can book one for you</p>
-            </div>
-            <a href="tel:+1234567" class="bg-orange-100 p-3 rounded-full text-orange-600"><i class="fa fa-taxi"></i></a>
-        </div>
-    </div>
-</section> -->
-
 </body>
 </html>
+
 
