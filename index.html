@@ -162,7 +162,7 @@
     try {
         await fetch(scriptURL, {
             method: "POST",
-            mode: 'no-cors', // This tells the browser to ignore CORS
+            // mode: 'no-cors', // This tells the browser to ignore CORS
             body: JSON.stringify({ text: orderText })
         });
         
