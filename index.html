@@ -141,40 +141,41 @@
         }
 
         async function sendOrder() {
-            const name = document.getElementById('cust-name').value;
-            const phone = document.getElementById('cust-phone').value;
+    const name = document.getElementById('cust-name').value;
+    const phone = document.getElementById('cust-phone').value;
+    if (!name || !phone) return alert("Please enter Name and Mobile Number");
 
-            if (!name || !phone) return alert("Please enter Name and Mobile Number");
 
-            let orderText = `🛎 *NEW ORDER*\n📍 *Room:* ${roomNumber}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n\n*ITEMS:*\n`;
-            let total = 0;
-            
-            Object.values(cart).forEach(item => {
-                orderText += `▪️ ${item.qty}x ${item.name} ($${(item.qty * item.price).toFixed(2)})\n`;
-                total += (item.qty * item.price);
-            });
-            orderText += `\n💰 *Total: $${total.toFixed(2)}*`;
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx_YgOYiEthHx5Y4FVDbK5C_xEXe0mum_stCQ-T143tfhaLUwjJJ9U2gOdB3OpLsXva/exec"; // PASTE YOUR URL HERE
 
-            const btn = document.getElementById('place-order-btn');
-            btn.disabled = true;
-            btn.innerText = "Sending...";
 
-            try {
-                const url = `https://corsproxy.io/?url=${encodeURIComponent(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`)}`
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: orderText, parse_mode: "Markdown" })
-                });
-                if(res.ok) {
-                    alert("Order Placed Successfully!");
-                    location.reload();
-                }
-            } catch (e) {
-                alert("Error sending order.");
-                btn.disabled = false;
-            }
-        }
+    let orderText = `🛎 *NEW ORDER*\n📍 *Room:* ${roomNumber}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n\n*ITEMS:*\n`;
+    Object.values(cart).forEach(item => {
+        orderText += `▪️ ${item.qty}x ${item.name}\n`;
+    });
+
+
+    const btn = document.getElementById('place-order-btn');
+    btn.innerText = "Sending...";
+
+
+    try {
+        await fetch(scriptURL, {
+            method: "POST",
+            mode: 'no-cors', // This tells the browser to ignore CORS
+            body: JSON.stringify({ text: orderText })
+        });
+        
+        // Since 'no-cors' mode doesn't allow reading the response, 
+        // we assume success if no error is thrown.
+        alert("Order Sent Successfully!");
+        location.reload();
+    } catch (e) {
+        alert("Check your internet or script URL.");
+        btn.innerText = "Confirm & Place Order";
+    }
+}
+
     </script>
 </body>
 </html>
