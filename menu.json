@@ -1,0 +1,15 @@
+{
+  "Hot Beverages": [
+    {"id": 1, "name": "Fresh Cappuccino", "price": 4.50},
+    {"id": 2, "name": "Masala Tea", "price": 2.50},
+    {"id": 3, "name": "Hot Chocolate", "price": 5.00}
+  ],
+  "Juice & Milkshakes": [
+    {"id": 4, "name": "Fresh Orange Juice", "price": 6.00},
+    {"id": 5, "name": "Belgium Chocolate Shake", "price": 7.50}
+  ],
+  "Snacks": [
+    {"id": 6, "name": "Club Sandwich", "price": 8.00},
+    {"id": 7, "name": "French Fries", "price": 4.00}
+  ]
+}
