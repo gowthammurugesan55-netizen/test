@@ -83,9 +83,11 @@
     try {
         const res = await fetch('menu.json');
         menu = await res.json();
+        const specialsRes = await fetch('banner.json');
+        banner = await specialsRes.json();
         
         // Render Specials
-        renderSpecials(menu.specials);
+        renderSpecials(banner.specials);
         
         // Clean the menu object to remove specials before rendering items
         const menuItemsOnly = { ...menu };
