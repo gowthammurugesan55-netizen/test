@@ -1,4 +1,9 @@
 {
+   "config": {
+    "serviceHours": "07:00 AM - 10:00 PM",
+    "frontDeskPhone": "+1234567890",
+    "isOpen": true
+  },
   "specials": [
     {
       "text": "10% discount on orders above Rs.1000",
