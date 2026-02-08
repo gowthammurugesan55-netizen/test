@@ -293,10 +293,10 @@ async function sendOrder() {
     
     let total = 0;
     Object.values(cart).forEach(i => {
-        text += `• ${i.qty}x ${i.name} ($${(i.qty * i.price).toFixed(2)})\n`;
+        text += `• ${i.qty}x ${i.name} (₹${(i.qty * i.price).toFixed(2)})\n`;
         total += (i.qty * i.price);
     });
-    text += `\n💰 *Total: $${total.toFixed(2)}*`;
+    text += `\n💰 *Total: ₹${total.toFixed(2)}*`;
 
     // Send logic...
     const btn = document.getElementById('place-order-btn');
