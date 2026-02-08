@@ -1,5 +1,17 @@
 {
-  "BREAKFAST SPECIALS": [
+  "specials": [
+    {
+      "text": "☕ Morning Combo: Coffee + Croissant for only $7!",
+      "bgColor": "bg-orange-100",
+      "textColor": "text-orange-900"
+    },
+    {
+      "text": "🍕 Happy Hour: 20% off all Snacks after 8 PM",
+      "bgColor": "bg-blue-100",
+      "textColor": "text-blue-900"
+    }
+  ],
+"BREAKFAST SPECIALS": [
     {"id": 1, "name": "Chapathi(2pcs) with Curry", "price": 90.00},
     {"id": 2, "name": "Paratha(2pcs) with Curry", "price": 120.00},
     {"id": 3, "name": "Puri(3pcs) with Curry", "price": 110.00},
