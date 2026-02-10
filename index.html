@@ -16,7 +16,11 @@
 
     <header class="bg-orange-900 text-white p-4 shadow-lg sticky top-0 z-50">
         <div class="flex justify-between items-center mb-3">
-            <h1 class="text-xl font-bold">OMISHA CAFE</h1>
+            <div>
+   <p id="dynamic-greeting" class="text-[10px] uppercase tracking-widest opacity-70 mb-1">Welcome</p>
+   <h1 class="text-xl font-bold">OMISHA CAFE</h1>
+</div>
+
             <span id="room-display" class="text-xs bg-orange-800 px-3 py-1 rounded-full border border-orange-700">Room: ...</span>
         </div>
         
@@ -36,6 +40,17 @@
     <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out">
         </div>
     </div>
+<div id="upsell-progress-container" class="px-4 mt-4 hidden">
+    <div class="bg-white p-3 rounded-2xl shadow-sm border border-orange-100">
+        <div class="flex justify-between text-[10px] font-bold mb-1">
+            <span id="upsell-msg" class="text-orange-900">Add more for a surprise!</span>
+            <span id="upsell-percent">0%</span>
+        </div>
+        <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+            <div id="upsell-bar" class="bg-orange-500 h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </div>
+</div>
 
     <main class="p-4 max-w-md mx-auto" id="menu-container">
         <div class="text-center py-20 text-gray-400">Loading Menu...</div>
@@ -76,6 +91,14 @@
 
 <div class="space-y-4 border-t pt-6">
     <div class="grid grid-cols-2 gap-4">
+
+        <div id="treat-yourself" class="mb-6">
+    <p class="text-[10px] font-bold text-gray-400 mb-3 uppercase tracking-widest">Treat Yourself</p>
+    <div id="upsell-list" class="flex gap-3 overflow-x-auto pb-2">
+        </div>
+</div>
+
+
         <input type="text" id="cust-name" placeholder="Full Name" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
         <input type="tel" id="cust-phone" placeholder="Mobile Number" class="p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 text-sm">
     </div>
@@ -112,6 +135,10 @@
         </div>
 
     <script>
+        const hr = new Date().getHours();
+const greeting = hr < 12 ? "Good Morning ☕" : hr < 17 ? "Good Afternoon 🥗" : "Good Evening 🍽️";
+document.getElementById('dynamic-greeting').innerText = greeting;
+
         let menu = {};
         let cart = {};
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YgOYiEthHx5Y4FVDbK5C_xEXe0mum_stCQ-T143tfhaLUwjJJ9U2gOdB3OpLsXva/exec"; // Update this
@@ -189,8 +216,11 @@ function renderSpecials(specials) {
                 
                 items.forEach(item => {
                     const tag = item.isVeg ? 
-    '<span class="text-[10px] border border-green-600 p-0.5 text-green-600 mr-2">🟢</span>' : 
-    '<span class="text-[10px] border border-red-600 p-0.5 text-red-600 mr-2">🔴</span>';
+    '<div class="veg-box"><div class="veg-dot"></div></div>' : 
+    '<div class="nonveg-box"><div class="nonveg-dot"></div></div>';
+
+                    const trending = item.isTrending ? '<span class="ml-2 bg-red-100 text-red-600 text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase"><i class="fa fa-fire mr-1"></i>Trending</span>' : '';
+
 
                     section += `
                     <div class="flex justify-between items-center bg-white p-4 rounded-2xl mb-3 shadow-sm border border-gray-50">
@@ -227,6 +257,17 @@ function renderSpecials(specials) {
             renderMenu(filtered);
         }
 
+        function updateUpsellProgress(total) {
+    const goal = 500; // Set your target amount for freebie/discount
+    const perc = Math.min((total / goal) * 100, 100);
+    document.getElementById('upsell-progress-container').classList.toggle('hidden', total === 0);
+    document.getElementById('upsell-bar').style.width = perc + "%";
+    document.getElementById('upsell-percent').innerText = Math.round(perc) + "%";
+    document.getElementById('upsell-msg').innerText = total < goal ? 
+        `Add ₹${(goal - total).toFixed(0)} more for a free dessert!` : "You've earned a free dessert! 🎁";
+}
+
+
         function scrollToCat(id) {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
             toggleNav();
@@ -250,6 +291,7 @@ function renderSpecials(specials) {
             bar.classList.toggle('hidden', count === 0);
             document.getElementById('cart-count').innerText = count + " Items Selected";
             document.getElementById('cart-total').innerText = "₹" + total.toFixed(2);
+            updateUpsellProgress(total);
         }
 
         function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); renderCartItems(); }
