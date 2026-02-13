@@ -853,10 +853,8 @@ async function postOrderToSheet(orderData) {
     try {
         const res = await fetch(ORDER_SCRIPT_URL, {
             method: 'POST',
-            redirect: 'follow' ,
-            headers: {
-    'Content-Type': 'text/plain;charset=utf-8',
-  },
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
         });
         const result = await res.json();
