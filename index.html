@@ -794,7 +794,9 @@ async function sendOrder() {
     const payment = document.querySelector('input[name="payment"]:checked').value;
     localStorage.setItem('guestName', name);
     localStorage.setItem('guestPhone', phone);
+        let orderId = ('ORD-' + Date.now().toString().slice(-6));
     let text = `🛎 *NEW ORDER: ROOM ${roomNumber}*\n`;
+        text += `*Order ID:* ${orderId}\n`;
     text += `👤 *Guest:* ${name}\n`;
     text += `📞 *Phone:* ${phone}\n`;
     text += `⏰ *Delivery:* ${schedule}\n`;
@@ -812,7 +814,7 @@ async function sendOrder() {
     btn.disabled = true;
     try {
         // POST to Google Apps Script
-        let orderId = await postOrderToSheet({
+        await postOrderToSheet({
             room: roomNumber,
             name: name,
             phone: phone,
@@ -823,7 +825,7 @@ async function sendOrder() {
         await fetch(SCRIPT_URL, { method: "POST", mode: 'no-cors', body: JSON.stringify({ text: text }) });
         // ...existing confirmation modal logic...
         const estimatedTime = calculateEstimatedTime();
-        orderId = orderId || ('ORD-' + Date.now().toString().slice(-6));
+        orderId = ('ORD-' + Date.now().toString().slice(-6));
         document.getElementById('order-id-display').innerText = orderId;
         document.getElementById('confirm-room').innerText = roomNumber;
         document.getElementById('confirm-name').innerText = name;
