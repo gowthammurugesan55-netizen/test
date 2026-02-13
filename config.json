@@ -1,9 +1,15 @@
 {
+   "upSellItems": [
+        {"id":1000, "name": "Chocolate Lava Cake", "price": 150.00, "isVeg": true},
+        {"id":1001, "name": "Gulab Jamun (2pcs)", "price": 100.00, "isVeg": true},
+        {"id":1002, "name": "Ice Cream Sundae", "price": 120.00, "isVeg": true},
+        {"id":1003, "name": "Brownie with Ice Cream", "price": 180.00, "isVeg": true}
+    ],
    "config": {
       "hotelName": "OMISHA CAFE",
       "upsellThreshold": 30,
     "serviceHours": "07:00 AM - 10:00 PM",
-    "frontDeskPhone": "+1234567890",
+    "frontDeskPhone": "+918220002829",
     "isOpen": true
   },
   "specials": [
@@ -11,11 +17,6 @@
       "text": "10% discount on orders above Rs.1000",
       "bgColor": "bg-orange-100",
       "textColor": "text-orange-900"
-    },
-    {
-      "text": "🍕 Happy Hour: 10% off all Snacks after 8 PM",
-      "bgColor": "bg-blue-100",
-      "textColor": "text-blue-900"
     }
   ]
 }
