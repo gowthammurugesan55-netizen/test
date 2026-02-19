@@ -1,0 +1,191 @@
+{
+  "BREAKFAST SPECIALS": [
+    {"id": 1, "name": "Chapathi (2pcs) with Curry", "price": 90.00, "isVeg": true},
+    {"id": 2, "name": "Puri (3pcs) with Curry", "price": 100.00, "isVeg": true},
+    {"id": 3, "name": "Paratha (2pcs) with Curry", "price": 120.00, "isVeg": true},
+    {"id": 4, "name": "Poha", "price": 80.00, "isVeg": true},
+    {"id": 5, "name": "Plain Maggi", "price": 70.00, "isVeg": true},
+    {"id": 6, "name": "Veg Maggi", "price": 90.00, "isVeg": true},
+    {"id": 7, "name": "Cheese Maggi", "price": 100.00, "isVeg": true},
+    {"id": 8, "name": "Veg Cheese Maggi", "price": 110.00, "isVeg": true},
+    {"id": 9, "name": "Egg Maggi", "price": 110.00, "isVeg": false},
+    {"id": 10, "name": "Egg Cheese Maggi", "price": 130.00, "isVeg": false},
+    {"id": 11, "name": "Panner Maggi", "price": 130.00, "isVeg": true},
+    {"id": 12, "name": "Cornflakes (Hot/Cold Milk)", "price": 100.00, "isVeg": true},
+    {"id": 13, "name": "Bread Omelette", "price": 120.00, "isVeg": false},
+    {"id": 14, "name": "Fruit Salad (Seasonal)", "price": 140.00, "isVeg": true}
+  ],
+  "CHOICE OF EGG": [
+    {"id": 15, "name": "Sunny Side Up", "price": 30.00, "isVeg": false},
+    {"id": 16, "name": "Full Boil", "price": 35.00, "isVeg": false},
+    {"id": 17, "name": "Boiled Egg (2pcs)", "price": 50.00, "isVeg": false},
+    {"id": 18, "name": "Fried Egg (2pcs)", "price": 70.00, "isVeg": false},
+    {"id": 19, "name": "Egg Omelette", "price": 70.00, "isVeg": false},
+    {"id": 20, "name": "Cheese Omelette", "price": 90.00, "isVeg": false},
+    {"id": 21, "name": "Scrambled Egg", "price": 80.00, "isVeg": false},
+    {"id": 22, "name": "Egg Burji", "price": 120.00, "isVeg": false}
+  ],
+  "QUICK BITES": [
+    {"id": 23, "name": "Roast Papad", "price": 40.00, "isVeg": true},
+    {"id": 24, "name": "Masala Papad", "price": 60.00, "isVeg": true},
+    {"id": 25, "name": "Peanut Masala", "price": 90.00, "isVeg": true},
+    {"id": 26, "name": "French Fries", "price": 130.00, "isVeg": true},
+    {"id": 27, "name": "Peri-peri French Fries", "price": 150.00, "isVeg": true},
+    {"id": 28, "name": "Onion Pakoda", "price": 120.00, "isVeg": true},
+    {"id": 29, "name": "Veg Pakoda", "price": 140.00, "isVeg": true},
+    {"id": 30, "name": "Egg Pakoda", "price": 160.00, "isVeg": false},
+    {"id": 31, "name": "Green Salad", "price": 100.00, "isVeg": true},
+    {"id": 32, "name": "Cucumber Salad", "price": 100.00, "isVeg": true}
+  ],
+  "TOAST": [
+    {"id": 33, "name": "Plain Toast", "price": 30.00, "isVeg": true},
+    {"id": 34, "name": "Butter Toast", "price": 50.00, "isVeg": true},
+    {"id": 35, "name": "Jam Toast", "price": 55.00, "isVeg": true},
+    {"id": 36, "name": "Cheese Toast", "price": 60.00, "isVeg": true},
+    {"id": 37, "name": "Butter Jam Toast", "price": 60.00, "isVeg": true},
+    {"id": 38, "name": "Peanut Butter Toast", "price": 70.00, "isVeg": true},
+    {"id": 39, "name": "Nutella Toast", "price": 80.00, "isVeg": true}
+  ],
+  "SANDWICH": [
+    {"id": 40, "name": "Veg Sandwich", "price": 120.00, "isVeg": true},
+    {"id": 41, "name": "Omelette Sandwich", "price": 130.00, "isVeg": false},
+    {"id": 42, "name": "Paneer Sandwich", "price": 150.00, "isVeg": true},
+    {"id": 43, "name": "Chicken Sandwich", "price": 170.00, "isVeg": false}
+  ],
+  "PASTA": [
+    {"id": 44, "name": "Veg Cheese Pasta", "price": 220.00, "isVeg": true},
+    {"id": 45, "name": "Chicken Cheese Pasta", "price": 250.00, "isVeg": false}
+  ],
+  "SOUP": [
+    {"id": 46, "name": "Tomato Soup", "price": 100.00, "isVeg": true},
+    {"id": 47, "name": "Veg Soup", "price": 120.00, "isVeg": true},
+    {"id": 48, "name": "Veg Manchow Soup", "price": 140.00, "isVeg": true},
+    {"id": 49, "name": "Chicken Manchow Soup", "price": 160.00, "isVeg": false}
+  ],
+  "VEG STARTERS": [
+    {"id": 50, "name": "Gobi Manchurian", "price": 180.00, "isVeg": true},
+    {"id": 51, "name": "Gobi Chilly", "price": 200.00, "isVeg": true},
+    {"id": 52, "name": "Gobi 65", "price": 200.00, "isVeg": true},
+    {"id": 53, "name": "Paneer Manchurian", "price": 190.00, "isVeg": true},
+    {"id": 54, "name": "Paneer Chilly", "price": 210.00, "isVeg": true},
+    {"id": 55, "name": "Pepper Paneer", "price": 220.00, "isVeg": true}
+  ],
+  "NON VEG STARTERS": [
+    {"id": 56, "name": "Chicken Kabab", "price": 220.00, "isVeg": false},
+    {"id": 57, "name": "Lemon Chicken", "price": 230.00, "isVeg": false},
+    {"id": 58, "name": "Chicken Manchurian", "price": 230.00, "isVeg": false},
+    {"id": 59, "name": "Chicken Chilly", "price": 240.00, "isVeg": false},
+    {"id": 60, "name": "Chicken Pepper Dry/Fry", "price": 240.00, "isVeg": false},
+    {"id": 61, "name": "Andhra Chilly Chicken", "price": 220.00, "isVeg": false},
+    {"id": 62, "name": "Garlic Chicken", "price": 230.00, "isVeg": false},
+    {"id": 63, "name": "Butter Garlic Chicken", "price": 250.00, "isVeg": false},
+    {"id": 64, "name": "Schezwan Chicken", "price": 240.00, "isVeg": false},
+    {"id": 65, "name": "Chicken Ghee Roast", "price": 240.00, "isVeg": false},
+    {"id": 66, "name": "Pepper Chicken", "price": 250.00, "isVeg": false},
+    {"id": 67, "name": "Chicken Sukka", "price": 220.00, "isVeg": false},
+    {"id": 68, "name": "Egg Manchurian", "price": 190.00, "isVeg": false},
+    {"id": 69, "name": "Egg Chilly", "price": 200.00, "isVeg": false},
+    {"id": 70, "name": "Fish Fry", "price": 0.00, "isVeg": false},
+    {"id": 71, "name": "Prawns Fry", "price": 0.00, "isVeg": false}
+  ],
+  "INDIAN VEG GRAVY": [
+    {"id": 72, "name": "Dal Fry", "price": 170.00, "isVeg": true},
+    {"id": 73, "name": "Dal Tadka", "price": 190.00, "isVeg": true},
+    {"id": 74, "name": "Aloo Gobi Masala", "price": 190.00, "isVeg": true},
+    {"id": 75, "name": "Aloo Matar", "price": 200.00, "isVeg": true},
+    {"id": 76, "name": "Chana Masala", "price": 180.00, "isVeg": true},
+    {"id": 77, "name": "Mix Veg Curry", "price": 200.00, "isVeg": true},
+    {"id": 78, "name": "Panner Masala", "price": 220.00, "isVeg": true},
+    {"id": 79, "name": "Paneer Butter Masala", "price": 240.00, "isVeg": true},
+    {"id": 80, "name": "Palak Paneer", "price": 230.00, "isVeg": true},
+    {"id": 81, "name": "Kadai Paneer", "price": 220.00, "isVeg": true},
+    {"id": 82, "name": "Kaju Masala", "price": 240.00, "isVeg": true},
+    {"id": 83, "name": "Mughlai Shahi Paneer", "price": 230.00, "isVeg": true}
+  ],
+  "INDIAN NON VEG GRAVY": [
+    {"id": 84, "name": "Chicken Masala", "price": 230.00, "isVeg": false},
+    {"id": 85, "name": "Chicken Butter Masala", "price": 260.00, "isVeg": false},
+    {"id": 86, "name": "Kadai Chicken", "price": 230.00, "isVeg": false},
+    {"id": 87, "name": "Chicken Vindaloo (Goan Sp.)", "price": 240.00, "isVeg": false},
+    {"id": 88, "name": "Chicken Kolhapuri", "price": 240.00, "isVeg": false},
+    {"id": 89, "name": "Chicken Hyderabadi", "price": 240.00, "isVeg": false},
+    {"id": 90, "name": "Malai Chicken", "price": 250.00, "isVeg": false},
+    {"id": 91, "name": "Egg Burji", "price": 120.00, "isVeg": false},
+    {"id": 92, "name": "Egg Masala", "price": 160.00, "isVeg": false},
+    {"id": 93, "name": "Egg Kolhapuri", "price": 170.00, "isVeg": false},
+    {"id": 94, "name": "Egg Hyderabadi", "price": 190.00, "isVeg": false},
+    {"id": 95, "name": "Crab Curry", "price": 0.00, "isVeg": false},
+    {"id": 96, "name": "Fish Curry", "price": 0.00, "isVeg": false},
+    {"id": 97, "name": "Prawns Curry", "price": 0.00, "isVeg": false},
+    {"id": 98, "name": "Prawn Butter Garlic", "price": 0.00, "isVeg": false}
+  ],
+  "INDIAN BREAD": [
+    {"id": 99, "name": "Chapati", "price": 25.00, "isVeg": true},
+    {"id": 100, "name": "Puri", "price": 25.00, "isVeg": true},
+    {"id": 101, "name": "Paratha", "price": 30.00, "isVeg": true}
+  ],
+  "RICE": [
+    {"id": 102, "name": "Veg Fried Rice", "price": 160.00, "isVeg": true},
+    {"id": 103, "name": "Egg Fried Rice", "price": 180.00, "isVeg": false},
+    {"id": 104, "name": "Paneer Fried Rice", "price": 200.00, "isVeg": true},
+    {"id": 105, "name": "Chicken Fried Rice", "price": 220.00, "isVeg": false},
+    {"id": 106, "name": "Schezwan Fried Rice", "price": 250.00, "isVeg": true},
+    {"id": 107, "name": "Jeera Rice", "price": 100.00, "isVeg": true},
+    {"id": 108, "name": "Ghee Rice", "price": 100.00, "isVeg": true},
+    {"id": 109, "name": "Curd Rice", "price": 100.00, "isVeg": true},
+    {"id": 110, "name": "Veg Pulao", "price": 160.00, "isVeg": true},
+    {"id": 111, "name": "Dal Kichadi", "price": 180.00, "isVeg": true},
+    {"id": 112, "name": "Plain White Rice", "price": 60.00, "isVeg": true},
+    {"id": 113, "name": "Plain Curd", "price": 40.00, "isVeg": true}
+  ],
+  "NOODLES": [
+    {"id": 114, "name": "Veg Noodles", "price": 170.00, "isVeg": true},
+    {"id": 115, "name": "Egg Noodles", "price": 190.00, "isVeg": false},
+    {"id": 116, "name": "Chicken Noodles", "price": 220.00, "isVeg": false}
+  ],
+  "BRIYANI": [
+    {"id": 117, "name": "Veg Biryani", "price": 190.00, "isVeg": true},
+    {"id": 118, "name": "Egg Biryani", "price": 210.00, "isVeg": false},
+    {"id": 119, "name": "Chicken Biryani", "price": 250.00, "isVeg": false}
+  ],
+  "HOT BEVERAGES": [
+    {"id": 120, "name": "Black Coffee", "price": 20.00, "isVeg": true},
+    {"id": 121, "name": "Black Tea", "price": 20.00, "isVeg": true},
+    {"id": 122, "name": "Hot Milk", "price": 30.00, "isVeg": true},
+    {"id": 123, "name": "Coffee", "price": 35.00, "isVeg": true},
+    {"id": 124, "name": "Tea", "price": 35.00, "isVeg": true},
+    {"id": 125, "name": "Cardamom Tea", "price": 40.00, "isVeg": true},
+    {"id": 126, "name": "Ginger Tea", "price": 40.00, "isVeg": true},
+    {"id": 127, "name": "Masala Tea", "price": 50.00, "isVeg": true},
+    {"id": 128, "name": "Green Tea", "price": 30.00, "isVeg": true},
+    {"id": 129, "name": "Lemon Tea", "price": 30.00, "isVeg": true},
+    {"id": 130, "name": "Lemon Honey Tea", "price": 40.00, "isVeg": true},
+    {"id": 131, "name": "Lemon Ginger Honey Tea", "price": 50.00, "isVeg": true},
+    {"id": 132, "name": "Boost / Horlicks", "price": 40.00, "isVeg": true},
+    {"id": 133, "name": "Hot Badam Milk", "price": 40.00, "isVeg": true}
+  ],
+  "JUICE & MILKSHAKE": [
+    {"id": 134, "name": "Butter Milk", "price": 50.00, "isVeg": true},
+    {"id": 135, "name": "Masala Butter Milk", "price": 70.00, "isVeg": true},
+    {"id": 136, "name": "Lassi", "price": 75.00, "isVeg": true},
+    {"id": 137, "name": "Lemon Juice", "price": 50.00, "isVeg": true},
+    {"id": 138, "name": "Lemon Soda", "price": 70.00, "isVeg": true},
+    {"id": 139, "name": "Lemon Mint Soda", "price": 80.00, "isVeg": true},
+    {"id": 140, "name": "Watermelon Juice", "price": 100.00, "isVeg": true},
+    {"id": 141, "name": "Orange Juice", "price": 130.00, "isVeg": true},
+    {"id": 142, "name": "Pineapple Juice", "price": 120.00, "isVeg": true},
+    {"id": 143, "name": "Pomegranate Juice", "price": 150.00, "isVeg": true},
+    {"id": 144, "name": "Oreo Shake", "price": 140.00, "isVeg": true},
+    {"id": 145, "name": "Kitkat Shake", "price": 150.00, "isVeg": true},
+    {"id": 146, "name": "Chocolate Shake", "price": 150.00, "isVeg": true},
+    {"id": 147, "name": "Cold Coffee", "price": 120.00, "isVeg": true},
+    {"id": 148, "name": "Coke", "price": 50.00, "isVeg": true},
+    {"id": 149, "name": "Sprite", "price": 50.00, "isVeg": true},
+    {"id": 150, "name": "Maaza", "price": 50.00, "isVeg": true}
+  ],
+  "MOCKTAIL": [
+    {"id": 151, "name": "Lemon Mojito Mocktail", "price": 170.00, "isVeg": true},
+    {"id": 152, "name": "Blue Lagoon Mocktail", "price": 200.00, "isVeg": true},
+    {"id": 153, "name": "Strawberry Lemonade Fizz", "price": 220.00, "isVeg": true}
+  ]
+}
