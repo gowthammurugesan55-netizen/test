@@ -9,7 +9,7 @@
       "upsellThreshold": 30,
     "serviceHours": "07:30 AM - 11:00 PM",
     "frontDeskPhone": "+918220002829",
-    "isOpen": true
+    "isOpen": false
   },
   "specials": [
     {
