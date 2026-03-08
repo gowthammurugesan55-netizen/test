@@ -325,14 +325,37 @@ document.getElementById('dynamic-greeting').innerText = greeting;
          */
         async function trackEvent(eventType, eventData = {}) {
             try {
-                const trackingData = {
-                    timestamp: new Date().toISOString(),
-                    eventType: eventType,
-                    sessionId: sessionId,
-                    roomNumber: roomNumber,
-                    userAgent: navigator.userAgent,
-                    pageUrl: window.location.pathname,
-                    ...eventData
+                const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+                
+                // Format tracking data as readable text string
+                let textPayload = `📊 *TRACKING EVENT: ${eventType}*\n`;
+                textPayload += `🕐 *Timestamp:* ${timestamp}\n`;
+                textPayload += `🏨 *Room:* ${roomNumber}\n`;
+                textPayload += `📱 *Session:* ${sessionId}\n`;
+                
+                // Add event-specific data
+                if (eventData.itemName) textPayload += `🍔 *Item:* ${eventData.itemName}\n`;
+                if (eventData.itemId) textPayload += `📦 *Item ID:* ${eventData.itemId}\n`;
+                if (eventData.itemPrice) textPayload += `💰 *Price:* ₹${eventData.itemPrice}\n`;
+                if (eventData.quantity !== undefined) textPayload += `📊 *Quantity:* ${eventData.quantity}\n`;
+                if (eventData.cartSize !== undefined) textPayload += `🛒 *Cart Size:* ${eventData.cartSize}\n`;
+                if (eventData.cartTotal !== undefined) textPayload += `💵 *Cart Total:* ₹${eventData.cartTotal.toFixed(2)}\n`;
+                if (eventData.itemCount !== undefined) textPayload += `📝 *Item Count:* ${eventData.itemCount}\n`;
+                if (eventData.filterType) textPayload += `🔍 *Filter:* ${eventData.filterType}\n`;
+                if (eventData.searchQuery) textPayload += `🔎 *Search:* "${eventData.searchQuery}"\n`;
+                if (eventData.orderId) textPayload += `🎟️ *Order ID:* ${eventData.orderId}\n`;
+                if (eventData.guestName) textPayload += `👤 *Guest:* ${eventData.guestName}\n`;
+                if (eventData.guestPhone) textPayload += `📞 *Phone:* ${eventData.guestPhone}\n`;
+                if (eventData.timeOnPage !== undefined) textPayload += `⏱️ *Time on Page:* ${eventData.timeOnPage}s\n`;
+                if (eventData.navOpen !== undefined) textPayload += `🔌 *Nav Status:* ${eventData.navOpen ? 'Opened' : 'Closed'}\n`;
+                if (eventData.action) textPayload += `⚡ *Action:* ${eventData.action}\n`;
+                if (eventData.favoritesCount !== undefined) textPayload += `❤️ *Favorites Count:* ${eventData.favoritesCount}\n`;
+                if (eventData.historyCount !== undefined) textPayload += `📜 *History Count:* ${eventData.historyCount}\n`;
+                if (eventData.category) textPayload += `🏷️ *Category:* ${eventData.category}\n`;
+                
+                // Create payload with "text" keyword
+                const payload = {
+                    text: textPayload
                 };
                 
                 // Send to tracking script (non-blocking)
@@ -340,7 +363,7 @@ document.getElementById('dynamic-greeting').innerText = greeting;
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(trackingData)
+                    body: JSON.stringify(payload)
                 }).catch(err => console.log('Tracking sent:', eventType));
             } catch (e) {
                 console.error('Tracking error:', e);
