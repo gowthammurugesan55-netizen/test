@@ -308,9 +308,136 @@ document.getElementById('dynamic-greeting').innerText = greeting;
         let favorites = JSON.parse(localStorage.getItem('favorites') || '{}');
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YgOYiEthHx5Y4FVDbK5C_xEXe0mum_stCQ-T143tfhaLUwjJJ9U2gOdB3OpLsXva/exec";
         const ORDER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyyiVCkR1NNS6IM6zVHFjbs5g1vc4iQGsahfPJgoMknMDQsdFiE2FLQZuotVeDm7lk-KQ/exec";
+        const TRACKING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKryymo9HoHYUpsxuBeliAQxrfGwAVGKlf-dkdLEFI1vp9zXr5j8oJdZAqbY39h6IrAw/exec"; // <-- Replace with your tracking Apps Script URL
         const params = new URLSearchParams(window.location.search);
         const roomNumber = params.get('room') || "Lobby";
         document.getElementById('room-display').innerText = "Room: " + roomNumber;
+
+        // ========== USER TRACKING SYSTEM ==========
+        let sessionId = localStorage.getItem('sessionId') || 'SESSION-' + Date.now();
+        localStorage.setItem('sessionId', sessionId);
+        let pageLoadTime = new Date();
+        
+        /**
+         * Send tracking event to Google Apps Script
+         * @param {string} eventType - Type of event (PAGE_LOAD, ITEM_SELECT, ITEM_DESELECT, VIEW_CART, TOGGLE_NAV, FILTER_CHANGE, etc.)
+         * @param {object} eventData - Additional event data
+         */
+        async function trackEvent(eventType, eventData = {}) {
+            try {
+                const trackingData = {
+                    timestamp: new Date().toISOString(),
+                    eventType: eventType,
+                    sessionId: sessionId,
+                    roomNumber: roomNumber,
+                    userAgent: navigator.userAgent,
+                    pageUrl: window.location.pathname,
+                    ...eventData
+                };
+                
+                // Send to tracking script (non-blocking)
+                fetch(TRACKING_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(trackingData)
+                }).catch(err => console.log('Tracking sent:', eventType));
+            } catch (e) {
+                console.error('Tracking error:', e);
+            }
+        }
+
+        /**
+         * Track item selection/deselection
+         */
+        function trackItemChange(id, itemName, itemPrice, qty, action) {
+            trackEvent('ITEM_' + action.toUpperCase(), {
+                itemId: id,
+                itemName: itemName,
+                itemPrice: itemPrice,
+                quantity: qty,
+                action: action,
+                cartSize: Object.keys(cart).length,
+                cartTotal: Object.values(cart).reduce((sum, item) => sum + (item.qty * item.price), 0)
+            });
+        }
+
+        /**
+         * Track view cart action
+         */
+        function trackCartView() {
+            const cartTotal = Object.values(cart).reduce((sum, item) => sum + (item.qty * item.price), 0);
+            const itemCount = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+            trackEvent('VIEW_CART', {
+                itemCount: itemCount,
+                cartTotal: cartTotal,
+                items: Object.values(cart).map(i => ({ name: i.name, qty: i.qty, price: i.price }))
+            });
+        }
+
+        /**
+         * Track menu navigation toggle
+         */
+        function trackNavToggle(isOpen) {
+            trackEvent('TOGGLE_NAV', {
+                navOpen: isOpen
+            });
+        }
+
+        /**
+         * Track filter changes
+         */
+        function trackFilterChange(filterType) {
+            trackEvent('FILTER_CHANGE', {
+                filterType: filterType
+            });
+        }
+
+        /**
+         * Track search queries
+         */
+        function trackSearch(query) {
+            if (query.trim()) {
+                trackEvent('SEARCH', {
+                    searchQuery: query,
+                    resultCount: document.querySelectorAll('[data-item-id]').length
+                });
+            }
+        }
+
+        /**
+         * Track favorite toggle
+         */
+        function trackFavoriteToggle(itemId, itemName, action) {
+            trackEvent('FAVORITE_' + action.toUpperCase(), {
+                itemId: itemId,
+                itemName: itemName,
+                totalFavorites: Object.keys(favorites).length
+            });
+        }
+
+        /**
+         * Track category navigation
+         */
+        function trackCategoryScroll(category) {
+            trackEvent('CATEGORY_VIEW', {
+                category: category
+            });
+        }
+
+        /**
+         * Track order placement
+         */
+        function trackOrderPlaced(orderId, guestName, guestPhone, itemCount, cartTotal) {
+            trackEvent('ORDER_PLACED', {
+                orderId: orderId,
+                guestName: guestName,
+                guestPhone: guestPhone,
+                itemCount: itemCount,
+                cartTotal: cartTotal,
+                timeOnPage: Math.round((new Date() - pageLoadTime) / 1000) // seconds
+            });
+        }
 
         // ========== TOAST NOTIFICATIONS (Animated, Accessible) ==========
         let toastTimeout;
@@ -416,6 +543,9 @@ document.getElementById('dynamic-greeting').innerText = greeting;
         function toggleHistory() {
             renderOrderHistory();
             document.getElementById('history-modal').classList.toggle('hidden');
+            trackEvent('VIEW_ORDER_HISTORY', {
+                historyCount: loadOrderHistory().length
+            });
         }
 
         function closeHistory() {
@@ -427,9 +557,11 @@ document.getElementById('dynamic-greeting').innerText = greeting;
             if (!favorites[itemId]) {
                 favorites[itemId] = { id: itemId, name: itemName, price: itemPrice };
                 showToast(`Added ${itemName} to favorites! ❤️`, 'success');
+                trackFavoriteToggle(itemId, itemName, 'add');
             } else {
                 delete favorites[itemId];
                 showToast(`Removed from favorites`, 'success');
+                trackFavoriteToggle(itemId, itemName, 'remove');
             }
             localStorage.setItem('favorites', JSON.stringify(favorites));
             renderFavorites();
@@ -466,6 +598,9 @@ document.getElementById('dynamic-greeting').innerText = greeting;
 
         function toggleFavorites() {
             document.getElementById('favorites-modal').classList.toggle('hidden');
+            trackEvent('VIEW_FAVORITES', {
+                favoritesCount: Object.keys(favorites).length
+            });
         }
 
         function closeFavorites() {
@@ -549,6 +684,9 @@ document.getElementById('dynamic-greeting').innerText = greeting;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`filter-${type}`).classList.add('active');
             filterMenu();
+            
+            // Track filter change
+            trackFilterChange(type);
         }
 
         function applyDietaryFilter(items) {
@@ -701,6 +839,11 @@ function renderSpecials(specials) {
                 if (matches.length > 0) filtered[category] = matches;
             }
             renderMenu(filtered);
+            
+            // Track search
+            if (query.trim()) {
+                trackSearch(query);
+            }
         }
 
         function updateUpsellProgress(total) {
@@ -722,10 +865,21 @@ function renderSpecials(specials) {
                 const y = el.getBoundingClientRect().top + window.pageYOffset - headerHeight - 8; // 8px extra margin
                 window.scrollTo({ top: y, behavior: 'smooth' });
                 toggleNav();
+                
+                // Track category view
+                const category = id.replace('cat-', '');
+                trackCategoryScroll(category);
             }
         }
 
-        function toggleNav() { document.getElementById('nav-menu').classList.toggle('hidden'); }
+        function toggleNav() { 
+            const navMenu = document.getElementById('nav-menu');
+            const isOpen = !navMenu.classList.contains('hidden');
+            navMenu.classList.toggle('hidden');
+            
+            // Track nav toggle
+            trackNavToggle(!isOpen);
+        }
 
         function changeQty(id, delta, name, price) {
             if (!cart[id]) cart[id] = { name: name, price: price, qty: 0 };
@@ -738,6 +892,9 @@ function renderSpecials(specials) {
             saveCartToStorage();
             showToast(`${name} ${delta > 0 ? 'added' : 'removed'}`, 'success');
             updateEstimatedTime();
+            
+            // Track item selection/deselection
+            trackItemChange(id, name, price, cart[id] ? cart[id].qty : 0, delta > 0 ? 'select' : 'deselect');
         }
 
         function updateBottomBar() {
@@ -752,7 +909,17 @@ function renderSpecials(specials) {
             updateUpsellProgress(total);
         }
 
-        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); renderCartItems();renderUpsellItems(); }
+        function toggleCart() { 
+            const isOpen = !document.getElementById('cart-modal').classList.contains('hidden');
+            document.getElementById('cart-modal').classList.toggle('hidden'); 
+            renderCartItems();
+            renderUpsellItems();
+            
+            // Track cart view only when opening the cart
+            if (!isOpen) {
+                trackCartView();
+            }
+        }
 
         function renderCartItems() {
             const list = document.getElementById('cart-items');
@@ -778,6 +945,12 @@ window.onload = function() {
         updateBottomBar();
         showToast('Cart restored! 🛒', 'success');
     }
+    
+    // Track page load
+    trackEvent('PAGE_LOAD', {
+        pageTitle: document.title,
+        referrer: document.referrer || 'direct'
+    });
     
     loadMenu();
 };
@@ -839,6 +1012,9 @@ async function sendOrder() {
         cart = {};
         updateBottomBar();
         showToast('Order placed successfully! 🎉', 'success');
+        
+        // Track order placement
+        trackOrderPlaced(orderId, name, phone, itemCount, total);
     } catch (e) {
         alert("Error placing order. Please try again.");
         btn.disabled = false;
@@ -871,6 +1047,7 @@ function toggleTrackOrder() {
     document.getElementById('track-order-modal').classList.toggle('hidden');
     document.getElementById('track-order-result').innerHTML = '';
     document.getElementById('track-order-id').value = '';
+    trackEvent('VIEW_TRACK_ORDER', {});
 }
 function closeTrackOrder() {
     document.getElementById('track-order-modal').classList.add('hidden');
